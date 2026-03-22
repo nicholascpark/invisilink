@@ -1580,11 +1580,75 @@ check "skill-runner.sh exists and executable" "$([ -x $VENTURE_DIR/skill-runner.
 check "healthcheck.sh exists and executable" "$([ -x $VENTURE_DIR/healthcheck.sh ] && echo true || echo false)"
 
 echo ""
+echo "--- Runtime Tests ---"
+
+# 1. Claude Code headless execution test
+CLAUDE_TEST=$(cd "$VENTURE_DIR" && claude --print --model haiku --dangerously-skip-permissions "Respond with exactly: HEARTBEAT_OK" 2>/dev/null | grep -c "HEARTBEAT_OK" || echo "0")
+check "Claude Code headless execution" "$([ "$CLAUDE_TEST" -gt 0 ] && echo true || echo false)"
+
+# 2. Telegram connectivity test
+if [ -n "${TELEGRAM_BOT_TOKEN:-}" ] && [ -n "${TELEGRAM_CHAT_ID:-}" ]; then
+  TG_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" -d "chat_id=${TELEGRAM_CHAT_ID}" -d "text=🏥 Healthcheck: $(basename $VENTURE_DIR) — testing Telegram connectivity" 2>/dev/null)
+  check "Telegram connectivity (HTTP $TG_RESPONSE)" "$([ "$TG_RESPONSE" = "200" ] && echo true || echo false)"
+else
+  echo "  ⊘ Telegram not configured (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set) — skipped"
+fi
+
+# 3. Skill-runner execution test
+if [ -x "$VENTURE_DIR/skill-runner.sh" ]; then
+  RUNNER_OUTPUT=$(cd "$VENTURE_DIR" && ./skill-runner.sh "$VENTURE_DIR" 2>&1)
+  RUNNER_EXIT=$?
+  check "skill-runner.sh executes without error (exit $RUNNER_EXIT)" "$([ $RUNNER_EXIT -eq 0 ] && echo true || echo false)"
+elif [ -x "$(dirname $0)/skill-runner.sh" ]; then
+  RUNNER_OUTPUT=$("$(dirname $0)/skill-runner.sh" "$VENTURE_DIR" 2>&1)
+  RUNNER_EXIT=$?
+  check "skill-runner.sh executes without error (exit $RUNNER_EXIT)" "$([ $RUNNER_EXIT -eq 0 ] && echo true || echo false)"
+else
+  check "skill-runner.sh found" "false"
+fi
+
+# 4. Email delivery test
+if [ -n "${BRIEFING_EMAIL:-}" ]; then
+  echo "Healthcheck test — $(basename $VENTURE_DIR) — $(date)" | mail -s "[$(basename $VENTURE_DIR)] Healthcheck Test" "$BRIEFING_EMAIL" 2>/dev/null
+  MAIL_EXIT=$?
+  check "Email delivery (exit $MAIL_EXIT)" "$([ $MAIL_EXIT -eq 0 ] && echo true || echo false)"
+else
+  echo "  ⊘ Email not configured (BRIEFING_EMAIL not set) — skipped"
+fi
+
+# 5. Heartbeat daemon test
+VENTURE_NAME=$(basename "$VENTURE_DIR")
+if [ -f /tmp/venture-heartbeat.pid ]; then
+  HB_PID=$(cat /tmp/venture-heartbeat.pid)
+  if kill -0 "$HB_PID" 2>/dev/null; then
+    check "Heartbeat daemon running (PID $HB_PID)" "true"
+  else
+    check "Heartbeat daemon running" "false"
+    echo "    → Start with: ./venture-heartbeat.sh $VENTURE_DIR &"
+  fi
+else
+  check "Heartbeat daemon running" "false"
+  echo "    → Start with: ./venture-heartbeat.sh $VENTURE_DIR &"
+fi
+
+# 6. fswatch availability test
+check "fswatch installed (event-driven mode)" "$(command -v fswatch >/dev/null 2>&1 && echo true || echo false)"
+if ! command -v fswatch >/dev/null 2>&1; then
+  echo "    → Install with: brew install fswatch (falls back to polling without it)"
+fi
+
+# 7. Event trigger test
+TEST_EVENT="$VENTURE_DIR/data/inbox/healthcheck-test-$(date +%s).json"
+echo '{"type":"healthcheck","timestamp":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > "$TEST_EVENT"
+check "Event file write to data/inbox" "$([ -f "$TEST_EVENT" ] && echo true || echo false)"
+rm -f "$TEST_EVENT"  # Clean up test event
+
+echo ""
 echo "=== Results: $PASS passed, $FAIL failed ==="
 if [ "$FAIL" -eq 0 ]; then
-  echo "Venture is healthy."
+  echo "Venture is fully operational."
 else
-  echo "Venture has issues. Fix the failures above."
+  echo "Venture has $FAIL issue(s). Fix the failures above."
 fi
 exit $FAIL
 ```
