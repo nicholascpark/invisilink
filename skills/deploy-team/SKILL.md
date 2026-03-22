@@ -131,6 +131,8 @@ tools: Read, Write, Edit, Bash, {WebSearch, WebFetch if needed}, Agent({worker-s
 
 # {Manager Title}
 
+> Read DNA.md before anything else. It is who I am.
+
 ## Identity
 {Who this person is, what they own, how they think — tuned to THIS project}
 
@@ -149,6 +151,8 @@ tools: Read, Write, Edit, Bash, {WebSearch, WebFetch if needed}, Agent({worker-s
 The Founder gains significant additions beyond the base template:
 
 ```markdown
+> Read DNA.md before anything else. It is who I am.
+
 ## Cycle
 
 ### Step 0: Orient from Sustenance
@@ -314,9 +318,35 @@ Any recommended replacement must provide EXACT identical functionality. No featu
 Cost savings estimates must include CFO review (flag in report).
 ```
 
+#### Worker Template
+
+Each worker follows this structure:
+
+```markdown
+---
+name: {worker-name}
+description: {role description}
+tools: Read, Write, Edit, Bash, {WebSearch, WebFetch if needed}
+---
+
+# {Worker Title}
+
+> Read DNA.md before anything else. It is who I am.
+
+## Contract
+**Input:** {what this worker receives — task spec, context, data}
+**Output:** {what this worker produces and where it goes}
+
+## Domain Knowledge
+{Project-specific and role-specific knowledge tuned to THIS project}
+
+## Meta-Instruction
+{Any standing constraints or research-first directives}
+```
+
 #### Other Managers and Workers
 
-Follow the same patterns as the original skill. Comms remains as-is. Other workers follow the standard worker template.
+Follow the same patterns above. Comms remains as-is. All workers follow the standard worker template.
 
 #### Channel Files
 
