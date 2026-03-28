@@ -1,5 +1,6 @@
 ---
 name: deploy-team
+version: "1.1"
 description: Deploy a 4-manager AI org (Founder/Builder/Growth/Comms) with lifecycle economics, autonomous mode, irrevocable gates, session briefings, and domain-tuned workers to any existing repo.
 user-invocable: true
 command: /deploy-team
@@ -1430,7 +1431,17 @@ triggers:
 
 # Umbilical Monitor
 
-Check `umbilical/inbox/` for new signal files. Classify priority (high/medium/low). Route high-priority signals to `data/inbox/` with escalation flag + `channels/general.md`. Route medium/low to `data/inbox/` for Founder reconciliation. Write results as JSON to stdout.
+Check `umbilical/inbox/` for new signal files. Classify by type and priority:
+
+**Signal types and routing:**
+- `assumption_challenge` → High priority. Write to `data/inbox/` + post to `channels/research.md` for Founder review.
+- `market_intelligence` → Medium priority. Write to `data/inbox/` for Founder reconciliation.
+- `parent_learning` → Medium priority. Generalizable execution patterns from the parent's curated knowledge base. Write to `data/inbox/` for Founder reconciliation.
+- `infrastructure_upgrade_available` → Low priority. New deploy-team version available. Post to `channels/general.md` so Founder is aware. No immediate action — human runs `/deploy-team` to upgrade.
+- `directive` → Medium priority. Post to `channels/general.md` + write to `data/inbox/`.
+- Any other type → Medium priority. Write to `data/inbox/` for Founder reconciliation.
+
+Route high-priority signals to `data/inbox/` with escalation flag + `channels/general.md`. Route medium/low to `data/inbox/` for Founder reconciliation. Write results as JSON to stdout.
 ```
 
 Also create `skills/market-intel-watchlist.json`:
