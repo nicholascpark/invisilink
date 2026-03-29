@@ -1,12 +1,12 @@
 ---
-name: deploy-team
-version: "1.1"
+name: download
+version: "1.2"
 description: Deploy a 4-manager AI org (Founder/Builder/Growth/Comms) with lifecycle economics, autonomous mode, irrevocable gates, session briefings, and domain-tuned workers to any existing repo.
 user-invocable: true
-command: /deploy-team
+command: /download
 ---
 
-# Deploy Team
+# Download
 
 Deploy a 4-manager organizational hierarchy to the current repo with lifecycle economics (real-dollar mortality enforcement), validation engine (parallel experiments from day one), adaptive learning (autoresearch loops, curriculum, pivot detection), autonomous/interactive dual-mode operation, irrevocable action gates, and session briefing digests. The human talks only to the Founder (CEO).
 
@@ -57,6 +57,19 @@ When agents already exist, run this sequence instead of the full deploy:
 14. **Review with human** — show what will be created/modified before writing
 15. **Commit** — `git add` only new/modified files, commit with message describing upgrade
 16. **Run healthcheck** — execute `./healthcheck.sh .` and report results to the user
+17. **Invisilink retrofit (v1.2+).** If `umbilical/` directory exists but `umbilical/config.md` does not, this is an incubator-spawned venture that predates the direct-from-parent upgrade path. Ask the user: "Parent repo path? (default: ~/Documents/business-machine)". Then:
+   - Write `umbilical/config.md` with the confirmed parent path and `linked: true`
+   - Replace the local skill file (this file) with a pointer stub:
+     ```markdown
+     ---
+     name: download
+     command: /download
+     ---
+     # Download
+
+     Read and follow the instructions at `{parent_path}/tools/invisilink/download.md`.
+     ```
+   - Tell the user: "Invisilink retrofit complete. Future `/download` runs will read directly from the parent repo."
 
 **Key constraint: NEVER overwrite existing agent definitions.** Only ADD the DNA directive to them and add NEW infrastructure files. Existing agents are domain-tuned and may have been customized — replacing them would destroy work.
 
@@ -1437,7 +1450,7 @@ Check `umbilical/inbox/` for new signal files. Classify by type and priority:
 - `assumption_challenge` → High priority. Write to `data/inbox/` + post to `channels/research.md` for Founder review.
 - `market_intelligence` → Medium priority. Write to `data/inbox/` for Founder reconciliation.
 - `parent_learning` → Medium priority. Generalizable execution patterns from the parent's curated knowledge base. Write to `data/inbox/` for Founder reconciliation.
-- `infrastructure_upgrade_available` → Low priority. New deploy-team version available. Post to `channels/general.md` so Founder is aware. No immediate action — human runs `/deploy-team` to upgrade.
+- `infrastructure_upgrade_available` → Low priority. New invisilink version available. Post to `channels/general.md` so Founder is aware. No immediate action — human runs `/download` to upgrade.
 - `directive` → Medium priority. Post to `channels/general.md` + write to `data/inbox/`.
 - Any other type → Medium priority. Write to `data/inbox/` for Founder reconciliation.
 
@@ -1945,7 +1958,7 @@ Write all files. Then:
 ```bash
 chmod +x sustenance.sh skill-runner.sh healthcheck.sh .claude/hooks/death-gate.sh .claude/hooks/sustenance-inject.sh .claude/hooks/cost-capture.sh .claude/hooks/dna-enforcement.sh .claude/hooks/irrevocable-gate.sh .claude/hooks/telegram-notify.sh .claude/hooks/session-briefing-email.sh .claude/hooks/sustenance-lib.sh
 git add .claude/agents/ .claude/hooks/ .claude/settings.json channels/ skills/ CLAUDE.md DNA.md capabilities.md sustenance.json sustenance.sh skill-runner.sh healthcheck.sh experiments.md program.md decisions-pending.md data/
-git commit -m "deploy team: 4-manager org with lifecycle economics, skill-runner, healthcheck"
+git commit -m "invisilink: 4-manager org with lifecycle economics, skill-runner, healthcheck"
 ```
 
 ### Step 10: Run Healthcheck
