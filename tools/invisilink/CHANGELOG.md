@@ -1,5 +1,11 @@
 # Invisilink Changelog
 
+## v1.6 — 2026-04-19
+
+- `bless.md` — loosened Step 3 guard. It previously rejected repos that looked incubator-spawned (founder.md + umbilical/inbox + umbilical/outbox). Older incubator-spawned ventures predate the `.claude/skills/flash/` stub convention and arrive as orphans — the old guard blocked their rescue. New rule: `/bless` is rejected only when `.claude/skills/flash/SKILL.md` already exists. Everything else can be self-healed by `/flash` step 17
+- `bless.md` bumped to v1.2
+- Trigger: manual (rebateguard orphan discovered — incubator-spawned, no `/flash` stub, unreachable by `/bless`)
+
 ## v1.5 — 2026-04-18
 
 - Removed bogus `command:` field from `flash.md` frontmatter and from stub templates in `incubator-scaffold.md` and `gnosis.md` (Claude Code ignores this field — `name` is the canonical identifier)

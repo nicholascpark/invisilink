@@ -1,6 +1,6 @@
 ---
 name: bless
-version: "1.1"
+version: "1.2"
 description: Deliver the /gnosis skill to a pre-existing repo so it can establish an umbilical connection to the parent. Run from the parent (business-machine).
 user-invocable: true
 ---
@@ -23,14 +23,11 @@ Resolve `~` to the home directory. Verify the path exists and is a directory.
 
 Check for `{target_path}/umbilical/config.md`. If it exists and contains `linked: true`, STOP. Tell the user: "This repo is already linked. Run `/flash` there to upgrade."
 
-### Step 3: Guard — Reject if Incubator-Spawned
+### Step 3: Guard — Reject Only if Already Has /flash
 
-Check for ALL THREE of:
-- `{target_path}/.claude/agents/founder/founder.md`
-- `{target_path}/umbilical/inbox/`
-- `{target_path}/umbilical/outbox/`
+Check for `{target_path}/.claude/skills/flash/SKILL.md`. If present, STOP. Tell the user: "This repo already has `/flash`. Run `/flash` there to upgrade."
 
-If all three exist, STOP. Tell the user: "This repo appears to be parent-spawned. It should already have `/flash`. Run `/flash` there to upgrade."
+Do NOT reject based on incubator-spawn markers alone (`.claude/agents/founder/founder.md` + `umbilical/inbox/` + `umbilical/outbox/`). Older incubator-spawned ventures predate the `.claude/skills/flash/` stub convention and arrive here as orphans — they need `/gnosis` delivered so they can re-establish the `/flash` skill. The `/flash` stub is the authoritative "is this venture upgrade-ready" marker; everything else is supporting infrastructure that `/flash` itself knows how to self-heal.
 
 ### Step 4: Deliver Gnosis Skill
 
