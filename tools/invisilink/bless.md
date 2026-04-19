@@ -1,9 +1,8 @@
 ---
 name: bless
-version: "1.0"
+version: "1.1"
 description: Deliver the /gnosis skill to a pre-existing repo so it can establish an umbilical connection to the parent. Run from the parent (business-machine).
 user-invocable: true
-command: /bless
 ---
 
 # Bless
@@ -35,18 +34,19 @@ If all three exist, STOP. Tell the user: "This repo appears to be parent-spawned
 
 ### Step 4: Deliver Gnosis Skill
 
-Create the directory:
+Claude Code discovers skills at `.claude/skills/<skill-name>/SKILL.md` (one directory per skill, file named `SKILL.md`). Create the directory:
 
 ```bash
-mkdir -p {target_path}/.claude/skills/invisilink
+mkdir -p {target_path}/.claude/skills/gnosis
 ```
 
-Write a pointer stub to `{target_path}/.claude/skills/invisilink/gnosis.md`:
+Write a pointer stub to `{target_path}/.claude/skills/gnosis/SKILL.md`:
 
 ```markdown
 ---
 name: gnosis
-command: /gnosis
+description: Pointer to parent invisilink gnosis skill. Establishes umbilical link for a pre-existing repo.
+user-invocable: true
 ---
 # Gnosis
 

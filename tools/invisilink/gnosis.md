@@ -1,9 +1,8 @@
 ---
 name: gnosis
-version: "1.1"
+version: "1.2"
 description: Establish umbilical connection AND knowledge participation for a pre-existing repo. Run after the parent has blessed this repo. Not for incubator-spawned ventures.
 user-invocable: true
-command: /gnosis
 ---
 
 # Gnosis
@@ -86,7 +85,7 @@ Legacy (v1.0) gnosis entries lacking these two fields are treated as `operationa
 
 ### Step 8: Write Umbilical Config
 
-Write `umbilical/config.md` in this repo:
+Write `umbilical/config.md` in this repo. Read the current invisilink version from `{parent_path}/tools/invisilink/flash.md` (the `version:` field in its frontmatter) and record it:
 
 ```markdown
 # Umbilical Configuration
@@ -94,6 +93,7 @@ Write `umbilical/config.md` in this repo:
 - linked: true
 - linked_date: {today's date in YYYY-MM-DD}
 - knowledge_exchange: enabled
+- invisilink_version: {version from parent flash.md, e.g. "1.5"}
 ```
 
 ### Step 9: Create Knowledge Vault Directory Structure
@@ -173,21 +173,26 @@ The monitor detects both typed packets (packet_type frontmatter) and legacy sign
 
 ### Step 12: Write Local `/flash` Stub
 
-Create the directory if needed:
+Claude Code discovers skills at `.claude/skills/<skill-name>/SKILL.md`. Create the directory if needed:
 
 ```bash
-mkdir -p .claude/skills/invisilink
+mkdir -p .claude/skills/flash
 ```
 
-Write `.claude/skills/invisilink/flash.md`:
+Write `.claude/skills/flash/SKILL.md` using the canonical invisilink pointer-stub shape (resolves the parent path from `umbilical/config.md` at runtime so the skill keeps working if the parent repo moves):
 
 ```markdown
 ---
 name: flash
+description: Pointer to parent invisilink flash skill. Reads the canonical instructions from the linked parent repo so the venture always picks up the latest version.
+user-invocable: true
 ---
+
 # Flash
 
-Read and follow the instructions at `{confirmed parent path}/tools/invisilink/flash.md`.
+This venture is linked to the parent. Read `umbilical/config.md` in this repo to resolve `parent_path`, then read and follow the instructions at `{parent_path}/tools/invisilink/flash.md` — that is the canonical source.
+
+If `umbilical/config.md` is missing or has no `parent_path`, stop and tell the user: "This venture is not linked. Run `/gnosis` (if delivered by parent `/bless`) or re-scaffold via the parent."
 ```
 
 ### Step 13: Request Catch-Up Parent Learning Import

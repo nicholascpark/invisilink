@@ -34,6 +34,7 @@ check "program.md exists" "$([ -f $VENTURE_DIR/program.md ] && echo true || echo
 # Hooks
 check "death-gate.sh exists and executable" "$([ -x $VENTURE_DIR/.claude/hooks/death-gate.sh ] && echo true || echo false)"
 check "sustenance-inject.sh exists" "$([ -x $VENTURE_DIR/.claude/hooks/sustenance-inject.sh ] && echo true || echo false)"
+check "sustenance-lib.sh exists" "$([ -f $VENTURE_DIR/.claude/hooks/sustenance-lib.sh ] && echo true || echo false)"
 check "cost-capture.sh exists" "$([ -x $VENTURE_DIR/.claude/hooks/cost-capture.sh ] && echo true || echo false)"
 check "dna-enforcement.sh exists" "$([ -x $VENTURE_DIR/.claude/hooks/dna-enforcement.sh ] && echo true || echo false)"
 check "irrevocable-gate.sh exists" "$([ -x $VENTURE_DIR/.claude/hooks/irrevocable-gate.sh ] && echo true || echo false)"
@@ -43,10 +44,50 @@ check "session-briefing-email.sh exists" "$([ -x $VENTURE_DIR/.claude/hooks/sess
 # Settings
 check "settings.json has hooks" "$([ -f $VENTURE_DIR/.claude/settings.json ] && jq '.hooks' $VENTURE_DIR/.claude/settings.json >/dev/null 2>&1 && echo true || echo false)"
 
-# Skills
+# Skills (NanoClaw worker skills)
 check "skills/ directory exists" "$([ -d $VENTURE_DIR/skills ] && echo true || echo false)"
 SKILL_COUNT=$(ls $VENTURE_DIR/skills/*.md 2>/dev/null | wc -l | tr -d ' ')
 check "skills/ has definitions ($SKILL_COUNT found)" "$([ $SKILL_COUNT -ge 1 ] && echo true || echo false)"
+
+# Umbilical (parent link)
+check "umbilical/config.md exists" "$([ -f $VENTURE_DIR/umbilical/config.md ] && echo true || echo false)"
+if [ -f "$VENTURE_DIR/umbilical/config.md" ]; then
+  LINKED=$(grep -E '^linked:' "$VENTURE_DIR/umbilical/config.md" | awk '{print $2}' | tr -d ' "')
+  check "umbilical linked: true" "$([ "$LINKED" = "true" ] && echo true || echo false)"
+  PARENT_PATH=$(grep -E '^parent_path:' "$VENTURE_DIR/umbilical/config.md" | sed 's/^parent_path:[[:space:]]*//' | tr -d '"' | tr -d '\r')
+  PARENT_PATH_EXPANDED=$(eval echo "$PARENT_PATH")
+  if [ -d "$PARENT_PATH_EXPANDED" ]; then P_OK=true; else P_OK=false; fi
+  check "parent_path resolves to existing dir" "$P_OK"
+  VENTURE_IL_VERSION=$(grep -E '^invisilink_version:' "$VENTURE_DIR/umbilical/config.md" | sed 's/^invisilink_version:[[:space:]]*//' | tr -d '"' | tr -d '\r')
+  if [ -n "$VENTURE_IL_VERSION" ]; then V_OK=true; else V_OK=false; fi
+  check "invisilink_version field present" "$V_OK"
+  # Compare against parent's canonical flash.md version
+  if [ -n "$VENTURE_IL_VERSION" ] && [ -f "$PARENT_PATH_EXPANDED/tools/invisilink/flash.md" ]; then
+    PARENT_IL_VERSION=$(grep -E '^version:' "$PARENT_PATH_EXPANDED/tools/invisilink/flash.md" | head -1 | sed 's/^version:[[:space:]]*//' | tr -d '"')
+    if [ "$VENTURE_IL_VERSION" = "$PARENT_IL_VERSION" ]; then
+      check "invisilink version matches parent ($VENTURE_IL_VERSION)" "true"
+    else
+      check "invisilink version matches parent (venture=$VENTURE_IL_VERSION parent=$PARENT_IL_VERSION)" "false"
+      echo "    → Run /flash to upgrade"
+    fi
+  fi
+fi
+check "umbilical/inbox/ exists" "$([ -d $VENTURE_DIR/umbilical/inbox ] && echo true || echo false)"
+check "umbilical/outbox/ exists" "$([ -d $VENTURE_DIR/umbilical/outbox ] && echo true || echo false)"
+
+# Claude Code skills (flash stub)
+check ".claude/skills/flash/SKILL.md exists" "$([ -f $VENTURE_DIR/.claude/skills/flash/SKILL.md ] && echo true || echo false)"
+if [ -f "$VENTURE_DIR/.claude/skills/flash/SKILL.md" ]; then
+  FLASH_LINES=$(wc -l < "$VENTURE_DIR/.claude/skills/flash/SKILL.md" | tr -d ' ')
+  check "flash SKILL.md is pointer stub (${FLASH_LINES} lines ≤20)" "$([ $FLASH_LINES -le 20 ] && echo true || echo false)"
+  if [ $FLASH_LINES -gt 20 ]; then
+    echo "    → Stub has drifted to full copy. Run /flash to re-stub."
+  fi
+fi
+
+# Knowledge base (federation)
+check "knowledge/ directory exists" "$([ -d $VENTURE_DIR/knowledge ] && echo true || echo false)"
+check "knowledge/raw/imports/parent/ exists (parent relay target)" "$([ -d $VENTURE_DIR/knowledge/raw/imports/parent ] && echo true || echo false)"
 
 # Data directories
 check "data/inbox exists" "$([ -d $VENTURE_DIR/data/inbox ] && echo true || echo false)"

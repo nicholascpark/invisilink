@@ -57,18 +57,37 @@ When agents already exist, run this sequence instead of the full deploy:
 14. **Review with human** — show what will be created/modified before writing
 15. **Commit** — `git add` only new/modified files, commit with message describing upgrade
 16. **Run healthcheck** — execute `./healthcheck.sh .` and report results to the user
-17. **Invisilink retrofit (v1.2+).** If `umbilical/` directory exists but `umbilical/config.md` does not, this is an incubator-spawned venture that predates the direct-from-parent upgrade path. Ask the user: "Parent repo path? (default: ~/Documents/business-machine)". Then:
-   - Write `umbilical/config.md` with the confirmed parent path and `linked: true`
-   - Replace the local skill file at `.claude/skills/flash/SKILL.md` with a pointer stub:
-     ```markdown
-     ---
-     name: flash
-     ---
-     # Flash
+17. **Invisilink retrofit (v1.2+).** This step handles two conditions: (a) `umbilical/` directory exists but `umbilical/config.md` does not (legacy incubator-spawned venture that predates direct-from-parent upgrade path), and (b) the local flash skill has drifted from a pointer stub into a full content copy (prevents automatic version parity). Trigger if EITHER condition is true.
 
-     Read and follow the instructions at `{parent_path}/tools/invisilink/flash.md`.
-     ```
-   - Tell the user: "Invisilink retrofit complete. Future `/flash` runs will read directly from the parent repo."
+   Detect condition (a): `[ -d umbilical ] && [ ! -f umbilical/config.md ]`.
+   Detect condition (b): `.claude/skills/flash/SKILL.md` exists AND its line count exceeds 20 (a pointer stub is ~12 lines; a full copy is 900+). Use `wc -l .claude/skills/flash/SKILL.md`.
+
+   If condition (a), ask the user: "Parent repo path? (default: ~/Documents/business-machine)". Write `umbilical/config.md` with the confirmed parent path, `linked: true`, `invisilink_version: {current version from parent flash.md}`, and today's `linked_date`.
+
+   In all cases, (re)write `.claude/skills/flash/SKILL.md` as the canonical pointer stub below. This fixes both legacy ventures and any ventures whose stub drifted into a full copy (a bug from earlier sync approaches). If the legacy venture has `.claude/skills/invisilink/flash.md` (old flat path), delete it:
+
+   ```bash
+   [ -f .claude/skills/invisilink/flash.md ] && rm -rf .claude/skills/invisilink
+   mkdir -p .claude/skills/flash
+   ```
+
+   Then write the stub:
+
+   ```markdown
+   ---
+   name: flash
+   description: Pointer to parent invisilink flash skill. Reads the canonical instructions from the linked parent repo so the venture always picks up the latest version.
+   user-invocable: true
+   ---
+
+   # Flash
+
+   This venture is linked to the parent. Read `umbilical/config.md` in this repo to resolve `parent_path`, then read and follow the instructions at `{parent_path}/tools/invisilink/flash.md` — that is the canonical source.
+
+   If `umbilical/config.md` is missing or has no `parent_path`, stop and tell the user: "This venture is not linked. Run `/gnosis` (if delivered by parent `/bless`) or re-scaffold via the parent."
+   ```
+
+   Tell the user: "Invisilink retrofit complete. Local `/flash` is now a pointer to `{parent_path}/tools/invisilink/flash.md` — future runs will always read the current canonical source."
 18. **Symlink venture wiki into parent knowledge graph (v1.3+).** If `knowledge/wiki/` exists and `umbilical/config.md` exists (venture is linked to parent), create a symlink from the parent's knowledge tree to this venture's wiki:
    ```bash
    PARENT_PATH=$(grep 'parent_path:' umbilical/config.md | sed 's/.*parent_path: //')
@@ -909,6 +928,17 @@ The deployed venture includes 5 NanoClaw skill templates (persistent background 
 | **umbilical-monitor** | haiku | Monitors for parent signals and sibling venture learnings |
 
 `skill-runner.sh` is a lightweight NanoClaw implementation that reads SKILL.md files, checks trigger schedules, and executes due skills via Claude Code with the model specified in each skill's `model:` field. When real NanoClaw is deployed, it replaces skill-runner.sh. Skills run on cost-appropriate models: haiku for monitoring/structured tasks (cheap), sonnet for analysis/judgment tasks.
+
+### Two Skill Locations — Don't Confuse Them
+
+A deployed venture has **two** separate `skills/` directories. They serve different runtimes and must not be mixed:
+
+| Path | Runtime | Discovery | Contents |
+|------|---------|-----------|----------|
+| `.claude/skills/<name>/SKILL.md` | Claude Code (interactive sessions) | Auto-registers as `/<name>` slash-command when a developer opens a Claude Code session in the venture | Currently one entry: `.claude/skills/flash/SKILL.md` (pointer stub → parent canonical). Gnosis-linked ventures also get `.claude/skills/gnosis/` until they run `/flash`. |
+| `skills/<name>.md` | NanoClaw / skill-runner.sh (background workers) | Polled by `skill-runner.sh` on a cron-style schedule declared in each SKILL.md's `trigger:` field | The 5 NanoClaw templates: financial-engine, growth-ops, market-intel, source-monitors, umbilical-monitor. |
+
+Rule of thumb: if the user invokes it with a slash, it lives in `.claude/skills/`. If a background worker runs it on a schedule, it lives in `skills/`. Healthcheck, incubator-scaffold, and `/flash` all treat these as distinct — never copy NanoClaw skills into `.claude/skills/` or vice versa.
 
 ## Important Rules
 
