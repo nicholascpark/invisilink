@@ -1,0 +1,43 @@
+{
+  "_comment": "Vault config TEMPLATE. Copied into {vault_uri}/config.json on initial scaffold. URI-shaped paths are resolved through the path-resolution helper at tools/invisilink/assets/scripts/knowledge-paths.sh. Replace the {TBD_*} placeholders with real URIs during initialization. This file lives in the vault and is NOT committed to the control-plane repo.",
+  "_init_instructions": "1. Copy this file to {vault_uri}/config.json. 2. Replace {TBD_VAULT_URI} and {TBD_CONTAINER_URI} with real file:// URIs (e.g., file:///Users/nicholaspark/Library/Mobile%20Documents/com~apple~CloudDocs/business-machine-vault/parent). 3. Verify with: knowledge-paths.sh resolve vault_uri. Pre-migration both URIs point to file://./knowledge.",
+  "role": "parent",
+  "schema_version": "1.0.0",
+  "storage_mode": "external-filesystem",
+  "vault_uri": "{TBD_VAULT_URI}",
+  "container_uri": "{TBD_CONTAINER_URI}",
+  "schema_path": "{vault_uri}/schema.md",
+  "index_path": "{vault_uri}/index.md",
+  "log_path": "{vault_uri}/log.md",
+  "hot_path": "{vault_uri}/hot.md",
+  "raw_root": "{vault_uri}/raw",
+  "wiki_root": "{vault_uri}/wiki",
+  "lineage_root": "{vault_uri}/lineage",
+  "inbox_root": "{container_uri}/inbox",
+  "exports_root": "{container_uri}/exports",
+  "archives_root": "{container_uri}/archives",
+  "meta_root": "{container_uri}/meta",
+  "capabilities_path": "{container_uri}/meta/capabilities.json",
+  "devices_path": "{container_uri}/meta/devices.json",
+  "transport_mode": "umbilical",
+  "allow_child_mounts": false,
+  "page_types": [
+    "market",
+    "pattern",
+    "framework",
+    "venture",
+    "signal",
+    "experiment",
+    "competitor",
+    "customer",
+    "domain",
+    "regulation"
+  ],
+  "lint_cadence_cycles": 5,
+  "vault_size_budget_bytes": 5368709120,
+  "icloud_settings": {
+    "disable_optimize_storage": true,
+    "atomic_write_via_temp": true,
+    "rehydrate_placeholders_before_read": true
+  }
+}

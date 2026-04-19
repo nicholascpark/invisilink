@@ -1,10 +1,14 @@
-# deploy-team
+# invisilink
 
-A Claude Code skill that deploys a 4-manager AI organizational hierarchy with lifecycle economics, autonomous/interactive dual-mode operation, irrevocable action gates, session briefing digests, and domain-tuned workers to any existing repo.
+A Claude Code skill that deploys a 4-manager AI organizational hierarchy with lifecycle economics, autonomous/interactive dual-mode operation, irrevocable action gates, session briefing digests, federated knowledge base, and domain-tuned workers to any existing repo.
+
+> **Note:** This repo is a distribution mirror. Source of truth lives in the parent `business-machine` repo at `tools/invisilink/`. See [`tools/invisilink/CHANGELOG.md`](tools/invisilink/CHANGELOG.md) for version history.
+>
+> The skill was previously named `deploy-team`. Renamed to `invisilink` (system) / `/flash` (command) as of v1.2 (2026-03-28).
 
 ## What It Does
 
-Run `/deploy-team` in any repo to get a full AI-powered team with economic survival pressure and autonomous operation:
+Run `/flash` in any repo to get a full AI-powered team with economic survival pressure and autonomous operation:
 
 - **Founder** (CEO) — owns strategy, priorities, economic survival, curriculum, pivot decisions, autonomous/interactive mode switching
 - **Builder** (CTO) — builds and ships the product, stewards the tech stack and tooling, manages execution infrastructure (Stripe, email, phone APIs)
@@ -41,28 +45,20 @@ Living curriculum in `program.md` with four stages: Does anyone care? -> Will th
 
 ## Install
 
-Add to your Claude Code settings:
-
-```json
-{
-  "skills": [
-    "/path/to/deploy-team/skills"
-  ]
-}
-```
-
-Or clone and add the path:
+Clone the repo and point Claude Code at the skill file:
 
 ```bash
-git clone https://github.com/nicholascpark/deploy-team.git
+git clone https://github.com/nicholascpark/invisilink.git
 ```
+
+The skill file is at `tools/invisilink/flash.md`. Add it to your Claude Code skills path (user-level `~/.claude/skills/flash/SKILL.md` as a copy, or symlink).
 
 ## Usage
 
 ```bash
 cd ~/your-project
 # then in Claude Code:
-/deploy-team
+/flash
 ```
 
 The skill will:

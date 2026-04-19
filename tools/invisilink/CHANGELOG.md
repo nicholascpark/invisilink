@@ -1,5 +1,25 @@
 # Invisilink Changelog
 
+## v1.5 — 2026-04-18
+
+- Removed bogus `command:` field from `flash.md` frontmatter and from stub templates in `incubator-scaffold.md` and `gnosis.md` (Claude Code ignores this field — `name` is the canonical identifier)
+- Simplified v1.2 retrofit (step 17) — forward-only, no longer mentions or renames legacy `deploy-team/` directories. Any remaining legacy dirs are a one-time manual cleanup
+- Trigger: manual (skill frontmatter audit after directory/name mismatch in appealengine)
+
+## v1.4 — 2026-04-07
+
+- Rewrote `flash.md` Step 5 as pure meta-instruction with asset references — all scripts and templates moved to `tools/invisilink/assets/`, skill file reduced from ~1340 lines to ~940
+- Updated upgrade mode references throughout
+- Trigger: manual (skill-size reduction, separation of instruction from artifact)
+
+## v1.3 — 2026-04-07
+
+- Added federated knowledge base infrastructure — `knowledge/` directory with `index.md`, `hot.md`, `raw/`, `wiki/` now deployed to every venture
+- Added `knowledge-librarian` worker under Founder (processes raw findings into typed wiki pages, maintains index, runs linting)
+- Added knowledge-compounding principle to DNA.md
+- Added Step 5m (knowledge base infrastructure) and knowledge-graph symlink step (retrofit step 18) for parent–venture Obsidian graph federation (symlink federation later retired in favor of typed packets; see incubator-scaffold Step 7c)
+- Trigger: manual (knowledge base rollout)
+
 ## v1.2 — 2026-03-28
 
 - Renamed system from deploy-team to Invisilink

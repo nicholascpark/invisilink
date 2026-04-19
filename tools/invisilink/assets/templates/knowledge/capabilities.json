@@ -1,0 +1,33 @@
+{
+  "_comment": "Feature gate TEMPLATE. Lives at {container_uri}/meta/capabilities.json. Agents check capabilities before using optional features via: knowledge-paths.sh capability <name>. A 'true' value means the feature is supported AND expected to work. A 'false' value means the feature is either not available or deliberately disabled. Do not silently attempt disabled capabilities.",
+  "_init_instructions": "1. Copy this file to {container_uri}/meta/capabilities.json. 2. Set 'declared_at' to the current ISO timestamp. 3. Review each capability and set true/false based on what this deployment actually supports. 4. Bump 'driver_versions' when the path-resolution helper gains new schemes.",
+  "schema_version": "1.0.0",
+  "declared_at": "{TBD_AT_INIT}",
+  "capabilities": {
+    "uri_path_resolution": true,
+    "lineage_records": true,
+    "packet_federation": true,
+    "device_tagged_logging": true,
+    "idempotent_migration": true,
+    "fallback_resilience": true,
+    "container_vault_split": true,
+    "inbox_promotion": true,
+    "hybrid_search": false,
+    "qmd_backend": false,
+    "icloud_storage": false,
+    "s3_storage": false,
+    "sqlite_storage": false,
+    "child_mount_access": false
+  },
+  "driver_versions": {
+    "file_driver": "1.0.0",
+    "s3_driver": null,
+    "sqlite_driver": null,
+    "path_resolver": "1.0.0"
+  },
+  "notes": {
+    "icloud_storage": "Set to true after Phase 7 migration moves the vault to ~/Library/Mobile Documents/com~apple~CloudDocs/business-machine-vault/",
+    "qmd_backend": "Set to true after qmd is installed and the helper grows a qmd query driver",
+    "child_mount_access": "Always false for parent vaults — the parent must not read child-specific vaults directly"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "venture": "{VENTURE_NAME}",
+  "spawned": "{SPAWN_DATE}",
+  "currency": "USD",
+  "investments": [
+    {
+      "id": "INV-001",
+      "date": "{SPAWN_DATE}",
+      "amount": {budget-amount},
+      "round": "seed",
+      "note": "initial allocation",
+      "balance_at_time": 0.00,
+      "venture_state": {
+        "phase": 0,
+        "assumptions_tested": 0,
+        "revenue_to_date": 0.00
+      }
+    }
+  ],
+  "transactions": [],
+  "model": {
+    "last_calibrated": "{SPAWN_DATE}",
+    "transaction_count": 0,
+    "cost_profiles": {},
+    "revenue_profiles": {},
+    "driver_correlations": {}
+  },
+  "projections": {
+    "generated": null,
+    "model_confidence": 0.0,
+    "runway": { "days": null, "ci_90": null },
+    "self_sustaining": { "projected_date": null, "probability": 0.0 },
+    "scenarios": {
+      "base": { "probability": 0.5 },
+      "worst": { "probability": 0.3 },
+      "best": { "probability": 0.2 }
+    }
+  },
+  "summary": {
+    "total_invested": {budget-amount},
+    "total_costs": 0.00,
+    "total_revenue": 0.00,
+    "balance": {budget-amount},
+    "net_income": 0.00,
+    "self_sustaining": false,
+    "burn_rate_daily": null,
+    "days_alive": 0
+  }
+}
